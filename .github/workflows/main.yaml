@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'config/**'
       - 'site/**'
@@ -22,7 +22,7 @@ jobs:
       run: echo $GITHUB_SHA > $GITHUB_WORKSPACE/site/_meta
 
     - name: Build container image
-      run: docker build -t ghcr.io/DankCity/dank-dev:$(echo $GITHUB_SHA | head -c7) .
+      run: docker build -t ghcr.io/dankcity/dank-dev:$(echo $GITHUB_SHA | head -c7) .
 
     - name: Install doctl
       uses: digitalocean/action-doctl@v2
@@ -37,11 +37,11 @@ jobs:
         password: ${{ secrets.CR_PAT }}
         
     - name: Push image to Github Container Registry
-      run: docker push ghcr.io/DankCity/dank-dev:$(echo $GITHUB_SHA | head -c7)
+      run: docker push ghcr.io/dankcity/dank-dev:$(echo $GITHUB_SHA | head -c7)
 
     - name: Update deployment file
       run: |
-        TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|ghcr.io/DankCity/dank-dev:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+        TAG=$(echo $GITHUB_SHA | head -c7) && sed -i 's|<IMAGE>|ghcr.io/dankcity/dank-dev:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
         LB_NAME=${{ secrets.LOADBALANCER_NAME }} && sed -i 's|<LB_NAME>|'${LB_NAME}'|' $GITHUB_WORKSPACE/config/deployment.yml
         LB_CERT_ID=${{ secrets.LOADBALANCER_CERTIFICATE_ID }} && sed -i 's|<LB_CERT_ID>|'${LB_CERT_ID}'|' $GITHUB_WORKSPACE/config/deployment.yml
 
@@ -52,4 +52,4 @@ jobs:
       run: kubectl apply -f $GITHUB_WORKSPACE/config/deployment.yml
 
     - name: Verify deployment
-      run: kubectl rollout status deployment/static-example
+      run: kubectl rollout status deployment/dank-dev
