@@ -33,7 +33,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: dank-dev-service
+  name: dank-dev-svc
   annotations:
     service.beta.kubernetes.io/do-loadbalancer-name: "<LB_NAME>"
     service.beta.kubernetes.io/do-loadbalancer-protocol: "https"
@@ -43,9 +43,9 @@ metadata:
 spec:
   type: LoadBalancer
   ports:
-    - name: https
+    - name: http
       protocol: TCP
-      port: 443
+      port: 80
       targetPort: 5000
   selector:
     app: dank-dev
@@ -65,6 +65,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dank-dev-service
+                name: dank-dev-svc
                 port:
                   number: 5000
